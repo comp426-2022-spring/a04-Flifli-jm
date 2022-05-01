@@ -15,7 +15,7 @@ if (row === undefined) {
             time TEXT,
             method TEXT,
             url TEXT,
-             protocol TEXT,
+            protocol TEXT,
             httpversion TEXT,
             status TEXT,
             referer TEXT,
