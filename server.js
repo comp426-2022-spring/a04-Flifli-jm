@@ -62,10 +62,19 @@ if (args.help || args.h) {
     console.log(help)
     process.exit(0)
 }
+
 //start an app server
 const server = app.listen (HTTP_PORT, () => {
     console.log("App listening on port %PORT%".replace("%PORT%", HTTP_PORT));
 });
+
+if (args.log == 'false') {
+    console.log("Nothing")
+  
+  } else {
+    const accessLog = fs.createWriteStream('access.log', { flags: 'a' })
+    app.use(morgan('combined', { stream: accessLog }))
+}
 
 if (args.debug) {
     app.get('/app/log/access/', (req, res,next) => {
@@ -76,10 +85,6 @@ if (args.debug) {
         throw new Error('Error test success')
     })
 }
-
-app.get('/app/echo/:number',(req,res,next)=>{
-    res.status(200).json({'message': req.params.number})
-})
 
 app.get("/app/", (req, res,next) => {
   res.status(200).json("200 OK");

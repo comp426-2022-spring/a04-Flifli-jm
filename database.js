@@ -1,8 +1,8 @@
-const database = require('better-sqlite3')
+const database = require('better-sqlite3');
 
 const db = new database('log.db')
 
-const stmt = db.prepare(`SELECT name from sqlite_master WHERE type='table' and name = 'accesslog';`)
+const stmt = db.prepare(`SELECT name from sqlite_master WHERE type='table' and name = 'accesslog';`);
 let row = stmt.get();
 if (row === undefined) {
     console.log('No log database. Creating log database...')
