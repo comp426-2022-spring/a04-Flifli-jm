@@ -9,6 +9,8 @@ const args = minimist(process.argv.slice(2));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
+const HTTP_PORT = args["port"] || 5555;
+
 // Store help text 
 const help = (`
 server.js [options]
@@ -26,11 +28,16 @@ server.js [options]
 
 --help	Return this message and exit.
 `)
+
 // If --help or -h, echo help text to STDOUT and exit
 if (args.help || args.h) {
     console.log(help)
     process.exit(0)
 }
+//start an app server
+const server = app.listen (HTTP_PORT, () => {
+    console.log("App listening on port %PORT%".replace("%PORT%", HTTP_PORT));
+});
 //loging db
 app.use((req, res, next) => {
     let logdata = {
@@ -63,19 +70,49 @@ app.use((req, res, next) => {
 args["port", "debug", "log", "help"];
 if (args.debug) {
     app.get('/app/log/access/', (req, res) => {
-        try {
             const stmt = db.prepare("SELECT * FROM accesslog").all();
-	        res.status(200).json(stmt);
-        } catch(e) {
-            console.error(e)
-        }
+	        res.status(200).json(stmt); 
     })
     app.get('/app/error/', (req, res) => {
-
         throw new Error('Error test success')
     })
 }
-const HTTP_PORT = args["port"] || 5555;
+
+app.get("/app/", (req, res,next) => {
+  res.status(200).json("200 OK");
+});
+
+
+app.get("/app/flip/", (req, res) => {
+    var flip = coinFlip()
+    return res.status(200).json({
+        "flip" : coinFlip()
+    })
+})
+
+
+app.get('/app/flips/:number', (req, res) => {
+    const raw = coinFlips(req.params.number);
+    const summary = countFlips(raw);
+    res.status(200).json({
+        "raw": raw,
+        "summary": summary
+    });
+});
+
+
+
+app.get("/app/flip/call/heads", (req, res) => {
+    return res.status(200).json(flipACoin("heads"))
+})
+
+app.get("/app/flip/call/tails", (req, res) => {
+    return res.status(200).json(flipACoin("tails"))
+})
+
+app.use(function(req, res){
+    res.status(404).send("404 NOT FOUND")
+})
 
 //coinFlip()
 function coinFlip() {
@@ -114,43 +151,3 @@ function flipACoin(call) {
     let ans = {call: call, flip: re, result: result}
     return ans;
 }
-
-//start an app server
-const server = app.listen (HTTP_PORT, () => {
-  console.log("App listening on port %PORT%".replace("%PORT%", HTTP_PORT));
-});
-app.get("/app/", (req, res) => {
-  res.status(200).json("200 OK");
-});
-
-
-app.get("/app/flip/", (req, res) => {
-    var flip = coinFlip()
-    return res.status(200).json({
-        "flip" : coinFlip()
-    })
-})
-
-
-app.get('/app/flips/:number', (req, res) => {
-    const raw = coinFlips(req.params.number);
-    const summary = countFlips(raw);
-    res.status(200).json({
-        "raw": raw,
-        "summary": summary
-    });
-});
-
-
-
-app.get("/app/flip/call/heads", (req, res) => {
-    return res.status(200).json(flipACoin("heads"))
-})
-
-app.get("/app/flip/call/tails", (req, res) => {
-    return res.status(200).json(flipACoin("tails"))
-})
-
-app.use(function(req, res){
-    res.status(404).send("404 NOT FOUND")
-})
