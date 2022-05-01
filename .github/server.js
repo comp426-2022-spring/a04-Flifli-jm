@@ -5,6 +5,8 @@ const fs = require('fs')
 const morgan = require('morgan')
 const minimist = require('minimist')
 const args = minimist(process.argv.slice(2));
+app.use(express.urlencoded({extended:true}));
+app.use(express.json());
 // See what is stored in the object produced by minimist
 console.log(args)
 // Store help text 
@@ -73,7 +75,46 @@ function flipACoin(call) {
 const server = app.listen(HTTP_PORT, () => {
   console.log("App listening on port %PORT%".replace("%PORT%", HTTP_PORT));
 });
+//loging db
+app.use((req, res, next) => {
+    let logdata = {
+        remoteaddr: req.ip,
+        remoteuser: req.user,
+        time: Date.now(),
+        method: req.method,
+        url: req.url,
+        protocol: req.protocol,
+        httpversion: req.httpVersion,
+        status: res.statusCode,
+        referrer: req.headers['referer'],
+        useragent: req.headers['user-agent']
+    };
+    console.log(logdata)
+    const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, status, referrer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    const info = stmt.run(
+        logdata.remoteaddr, 
+        logdata.remoteuser, 
+        logdata.time, 
+        logdata.method, 
+        logdata.url, 
+        logdata.protocol, 
+        logdata.httpversion, 
+        logdata.status, 
+        logdata.referrer, 
+        logdata.useragent)
+    next();
+})
+if (args.debug || args.d) {
+    app.get('/app/log/access/', (req, res) => {
+        const stmt = db.prepare("SELECT * FROM accesslog").all();
+	    res.status(200).json(stmt);
+    })
 
+    app.get('/app/error/', (req, res) => {
+
+        throw new Error('Error test success')
+    })
+}
 app.get("/app/", (req, res) => {
   res.status(200).json("200 OK");
 });

@@ -5,7 +5,7 @@ const db = new database('log.db')
 const stmt = db.prepare(`SELECT name from sqlite_master WHERE type='table' and name = 'accesslog';`)
 let row = stmt.get();
 if (row === undefined) {
-    console.log('Log database missing. Creating log database...')
+    console.log('No log database. Creating log database...')
 
     const sqlInit = `
         CREATE TABLE accesslog ( 
