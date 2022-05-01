@@ -1,6 +1,6 @@
+const db = require('./database.js')
 const express = require('express')
 const app = express();
-const db = require('./database.js')
 const fs = require('fs')
 const morgan = require('morgan')
 const minimist = require('minimist')
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
         logdata.useragent)
     next();
 })
-args["port", "debug", "log", "help"];
+args["port"]
 const HTTP_PORT = args["port"] || 5555;
 
 // Store help text 
@@ -57,7 +57,6 @@ server.js [options]
 
 --help	Return this message and exit.
 `)
-
 // If --help or -h, echo help text to STDOUT and exit
 if (args.help || args.h) {
     console.log(help)
