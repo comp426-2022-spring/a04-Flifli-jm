@@ -5,9 +5,10 @@ const fs = require('fs')
 const morgan = require('morgan')
 const minimist = require('minimist')
 const args = minimist(process.argv.slice(2));
+const stream = require('stream')
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
-args['port', 'debug', 'log', 'help'];
+args["port", "debug", "log", "help"];
 // See what is stored in the object produced by minimist
 console.log(args)
 // Store help text 
@@ -33,7 +34,7 @@ if (args.help || args.h) {
     process.exit(0)
 }
 
-const HTTP_PORT = args['port'] || 5000;
+const HTTP_PORT = args["port"] || 5555;
 
 //coinFlip()
 function coinFlip() {
@@ -105,10 +106,14 @@ app.use((req, res, next) => {
         logdata.useragent)
     next();
 })
-if (args.debug || args.d) {
+if (args.debug) {
     app.get('/app/log/access/', (req, res) => {
-        const stmt = db.prepare("SELECT * FROM accesslog").all();
-	    res.status(200).json(stmt);
+        try {
+            const stmt = db.prepare("SELECT * FROM accesslog").all();
+	        res.status(200).json(stmt);
+        } catch(e) {
+            console.error(e)
+        }
     })
 
     app.get('/app/error/', (req, res) => {
