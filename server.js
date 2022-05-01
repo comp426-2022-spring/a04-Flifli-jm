@@ -76,7 +76,7 @@ if (args.log == 'false') {
     app.use(morgan('combined', { stream: accessLog }))
 }
 
-if (args.debug) {
+if (args.debug || args.d) {
     app.get('/app/log/access/', (req, res,next) => {
             const stmt = db.prepare('SELECT * FROM accesslog').all()
 	        res.status(200).json(stmt); 
