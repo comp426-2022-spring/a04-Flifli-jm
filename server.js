@@ -77,6 +77,10 @@ if (args.debug) {
     })
 }
 
+app.get('/app/echo/:number',(req,res,next)=>{
+    res.status(200).json({'message': req.params.number})
+})
+
 app.get("/app/", (req, res,next) => {
   res.status(200).json("200 OK");
 });
