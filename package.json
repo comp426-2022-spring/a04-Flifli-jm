@@ -1,0 +1,30 @@
+{
+  "name": "a04-flifli-jm",
+  "version": "1.0.0",
+  "description": "Databases,logs,errors",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/comp426-2022-spring/a04-Flifli-jm.git"
+  },
+  "keywords": [
+    "database"
+  ],
+  "author": "Flifli-jm",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/comp426-2022-spring/a04-Flifli-jm/issues"
+  },
+  "homepage": "https://github.com/comp426-2022-spring/a04-Flifli-jm#readme",
+  "dependencies": {
+    "better-sqlite3": "^7.5.1",
+    "curl": "^0.1.4",
+    "express": "^4.17.3",
+    "minimist": "^1.2.6",
+    "morgan": "^1.10.0",
+    "yargs": "^17.4.1"
+  }
+}
